@@ -3,7 +3,7 @@
 **Mode:** A (build-along), with a normalization clinic and temporal data in S3   **Release:** none (modeling block M1–M8, between weeks 9 and 10)
 **Outcome:** you can create tables in PostgreSQL, write basic SQL, explain keys and constraints, draw an ERD with cardinality, normalize a table to 3NF, turn a class diagram into tables, and store people, roles, money, history and time the way real business systems do (append-only ledger, effective-dated roles, valid time vs recorded time, a database transaction).
 **Before you start**
-- Docker works (Week 1). You finished M1–M6, so you have class models for the practical domains from M5 and M6, including **Bank accounts** (domain 3) and **General ledger** (domain 4), in `~/shopflow-notes/modeling/<domain>/`. You also know the M3 and M4 building blocks (party, role, organization unit, money, time interval, effective dating, history).
+- Docker works: if not yet installed, do Part 3 of `lessons/appendix/appendix-a-web-ports-docker.md` first. You finished M1–M6, so you have class models for the practical domains from M5 and M6, including **Bank accounts** (domain 3) and **General ledger** (domain 4), in `~/shopflow-notes/modeling/<domain>/`. You also know the M3 and M4 building blocks (party, role, organization unit, money, time interval, effective dating, history).
 - You have never used a database before. That is fine; this week starts at zero.
 - Indexes, query plans, isolation levels and locking are **Phase 4** (weeks 21–27). Here we need tables, constraints, queries and the basic idea of a transaction (`BEGIN`, `COMMIT`, `ROLLBACK`).
 

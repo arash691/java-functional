@@ -1,141 +1,176 @@
-# Week 1: Backend mental model and your first green test
+# Week 1: Your Java toolchain: install, compile, run, Maven, first green test
 
 **Mode:** A (build-along), with two small troubleshooting incidents (B-lite)  **Release:** v0.1 (toolchain)
-**Outcome:** you can trace a request from the browser to a server and back, you have a working Java toolchain, and you have turned your first red test green.
+**Outcome:** you have a working Java setup; you can compile and run Java programs from the command line; you can explain what the JDK, the compiler, the JVM and Maven each do; and you have turned your first red test green.
 
 **Before you start**
-- A laptop with admin rights, a GitHub account, about 10 GB of free disk, and a stable connection (Docker images are large).
-- You will be asked to install: a JDK, IntelliJ IDEA (Community is enough), Docker Desktop. Install them during S2, not before.
+- A laptop with admin rights, a GitHub account, and about 5 GB of free disk space.
+- You will install a JDK and IntelliJ IDEA (Community is enough) this week. Nothing else.
 - Create a folder for notes: `~/shopflow-notes/` with a file `ledger.md` (copy the template from `reality-lab/LEDGER.md`).
+- Networking (DNS, TCP, TLS, `curl`), ports, Docker and the event loop are **not needed now**. They are in `lessons/appendix/appendix-a-web-ports-docker.md`. Read them later, when a lesson points there.
 
 **Repo:** `shopflow-lab`, module `core`, package `shopflow.w00`, tag `@Tag("w00")`
 Run: `scripts/run-week.sh w00`   Hints: `hints/w00/` (none this week)   Solutions: `solutions/w00/`
 
 > Red tests are the starting point, not an error. A red test tells you exactly what the code must do.
 
+**How to read the steps:** every step says what to do, shows an example where one helps, and tells you what you should see. The time in brackets is a budget. At twice the time, stop and use the "Stuck?" routine in `lessons/README.md`.
+
 ---
 
-## S1 Try it (3h): a request's life, and your first server (mode A)
-You already know HTTP from the **client** side (`fetch`). Today you will see the same request from the **server** side.
+## S1 Try it (3h): install Java, compile, run, and see how it works (mode A)
+*In this session you will install Java, write a few tiny programs, compile and run them by hand, and look inside the result. By the end you will understand the path "source code → compiler → bytecode → JVM", which is the base for everything else.*
 
-1. (20m) **Entry quiz.** Answer without searching, then check the answers. Score yourself honestly; anything you miss goes to the flashcard list in S4.
-   1) What does DNS return? 2) What is the TCP three-way handshake and why does it exist? 3) Name two things TLS gives you. 4) What is the difference between `GET` and `POST` regarding idempotency? 5) What does status 404 mean vs 500? 6) What does `git rebase` do that `git merge` does not? 7) What is a process and how is it different from a thread? 8) What does `cd`, `ls`, `grep` do? 9) In JS, what does the event loop do when you `await` a `fetch`? 10) What is a port?
-   <details><summary>Answers</summary>
-
-   1) An IP address (or several) for a hostname. 2) SYN, SYN-ACK, ACK; both sides agree on initial sequence numbers so TCP can deliver bytes reliably and in order. 3) Encryption, server authentication (certificates), and integrity. 4) `GET` is safe and idempotent; `POST` is neither by default, so retrying it can duplicate effects. 5) 404: the resource was not found (client-side problem); 500: the server failed. 6) Rebase replays your commits on a new base for a linear history; merge creates a merge commit. 7) A process has its own memory; threads share the memory of their process. 8) Change directory, list files, search text. 9) It registers a continuation and runs other callbacks until the promise settles. 10) A 16-bit number that lets one machine run many network services.
-   </details>
-   Scoring: 8 or more correct, skim S1 steps 4 and 7 only. Fewer than 6, do everything slowly.
-2. (10m) **Check your tools.** Open a terminal and run `curl --version`, `dig -v` (or `nslookup example.com` on Windows), `openssl version`, `git --version`. Write down anything that is missing and install it (macOS: `brew install curl bind openssl git`; Debian/Ubuntu: `sudo apt install curl dnsutils openssl git`).
-3. (25m) **Trace one request.** Run these and copy the output into `~/shopflow-notes/week1-trace.md`:
-   - `dig example.com +short`  (DNS: the IP address)
-   - `curl -v https://example.com 2>&1 | head -60`  (look for the lines starting `*   Trying`, `* Connected`, `* TLSv1.3`, `> GET / HTTP/2`, `< HTTP/2 200`)
-   - `openssl s_client -connect example.com:443 -servername example.com </dev/null 2>/dev/null | head -25`  (the certificate chain)
-   Annotate each block of output with the step it belongs to: DNS, TCP connect, TLS handshake, HTTP request, HTTP response.
-4. (30m) **Read, with questions.** *High Performance Browser Networking* (HPBN, free online): ch. 1 "Primer on Latency and Bandwidth", the three-way handshake part of ch. 2 "Building Blocks of TCP", and the TLS handshake part of ch. 4. Answer in your notes: (a) Why does opening a new HTTPS connection cost several round trips before the first byte of data? (b) Which of those round trips could connection reuse avoid? (c) Why does latency matter more than bandwidth for small requests?
-5. (30m) **Run your first server.** Predict before you run: what will `curl localhost:8080/hello` print? Then, from the root of `shopflow-lab`:
-   - `java core/src/main/java/shopflow/w00/TinyServer.java` (a Java file you can run directly, no build step)
-   - In a second terminal: `curl -v localhost:8080/hello`. Compare the lines with the `example.com` trace: where are the DNS and TLS steps? (Answer: gone, because it's `localhost` over plain HTTP.)
-   - Open `http://localhost:8080/hello` in the browser, open DevTools, Network tab, reload, click the request. Match the Request/Response headers with the `curl -v` output.
-   - Read `TinyServer.java` top to bottom. Find: the port, the handler, and the reply. Change the message, restart (Ctrl+C then run again), reload.
-6. (30m) **Threads vs the event loop.** Predict first: if one request takes 2 seconds, what happens to a second request that arrives right after? Run `TinyServer` with its default single dispatcher thread, then in two terminals: `curl localhost:8080/slow` and, 0.3 seconds later, `time curl localhost:8080/hello`. Write down how long `/hello` took. Restart with a pool: `java core/src/main/java/shopflow/w00/TinyServer.java 8080 4` and repeat. Note the thread name printed in each reply.
-7. (25m) **Compare with Node.** Watch Philip Roberts, *What the heck is the event loop anyway?* (about 25 min) or read the Node.js docs page "The Node.js Event Loop". Write 6 lines: how Node would handle `/slow` (non-blocking I/O, the loop stays free) versus the JVM approach here (a thread blocks while sleeping, so you need more threads). Mention what happens in Node if you block the loop with a CPU-heavy loop.
-8. (10m) **Draw the diagram.** On paper or in a drawing tool: browser → DNS → TCP/TLS → load balancer (imagine) → ShopFlow service → database → back. Label which parts you traced today.
+1. (20m) **The big picture first.** Read this and copy the diagram into your notes:
+   ```
+   Hello.java --javac--> Hello.class --java--> the JVM runs it
+   (source text)         (bytecode)            (a program that runs bytecode)
+   ```
+   - **JDK** (Java Development Kit): everything a developer needs: the compiler `javac`, the launcher `java`, tools such as `javap` and `jshell`, and the JVM.
+   - **JRE** (runtime only): just enough to run programs. You always install the JDK.
+   - **JVM** (Java Virtual Machine): the program that loads `.class` files and runs them. The same bytecode runs on any operating system, which is the old promise "write once, run anywhere".
+   - Compare with Node: `node app.js` reads text and runs it. In Java, a compiler checks the code first and turns it into bytecode; many mistakes are caught before the program ever starts.
+2. (25m) **Install the JDK.** Install JDK 25 (LTS); 21 also works. Option A, SDKMAN (macOS/Linux): `curl -s "https://get.sdkman.io" | bash`, open a **new** terminal, `sdk list java`, then `sdk install java <the Temurin 25 identifier shown, for example 25.0.1-tem>` (identifiers change; verify against current docs). Option B, Homebrew on macOS: `brew install openjdk@25`, then follow the message brew prints to link it. Windows: install a Temurin 25 or 21 MSI from the Adoptium site and tick "set JAVA_HOME". Check: `java -version` and `javac -version` must **both** print 25 (or 21). *Expected:* two lines each that contain the same major version. If `javac` is "not found", you installed a runtime only; install the JDK.
+3. (25m) **Compile and run by hand.** Make a playground folder: `mkdir -p ~/java-playground && cd ~/java-playground`. Create `Hello.java`:
+   ```java
+   public class Hello {
+       public static void main(String[] args) {
+           System.out.println("Hello, Java!");
+       }
+   }
+   ```
+   *Predict:* what files exist after each command?
+   - `java Hello.java` (runs the source file directly, no `.class` file is kept)
+   - `javac Hello.java` then `ls` (you now have `Hello.class`)
+   - `java Hello` (runs the compiled class; note: no `.class` and no `.java` in this command)
+   Write in your notes the difference between the three commands.
+4. (25m) **Look inside, and read error messages.** Run `javap -c Hello` and find the line with `invokevirtual ... println`: that is the bytecode for your print statement. Now break the program on purpose, one change at a time, run `javac Hello.java` and read the first line of each error:
+   - delete a semicolon → `error: ';' expected`
+   - rename the class to `Helo` but keep the file name → `class Helo is public, should be declared in a file named Helo.java`
+   - change `println` to `printn` → `error: cannot find symbol`
+   Rule: the **first** error is the one to fix; later errors are often a result of it. Restore the file.
+5. (30m) **Three small samples.** Type (do not paste) and run each; write your prediction as a comment first.
+   - `Greeter.java`: reads an argument.
+     ```java
+     public class Greeter {
+         public static void main(String[] args) {
+             String name = args.length > 0 ? args[0] : "world";
+             for (int i = 1; i <= 3; i++) {
+                 System.out.println(i + ": Hello, " + name + "!");
+             }
+         }
+     }
+     ```
+     Run `java Greeter.java Sara` and `java Greeter.java`.
+   - `Sum.java`: reads numbers from the keyboard until you type `0`, then prints the total (use `java.util.Scanner` on `System.in`; look up the class in the Javadoc via the dev.java site).
+   - `Packages`: make folders `com/example/` with `App.java` that has `package com.example;` at the top and prints a line. Compile with `javac -d out com/example/App.java`, run with `java -cp out com.example.App`. Explain in your notes: `-d out` means "put the class files here"; `-cp out` (the *classpath*) means "look for classes here".
+6. (25m) **`jshell` and a `jar`.** `jshell` is Java's playground: start it, type `1 + 2`, then `"abc".toUpperCase()`, then `int x = 10; x * 3`, then `/exit`. Then build a runnable archive: create `manifest.txt` containing `Main-Class: Hello` (end with an empty line), run `jar cfm hello.jar manifest.txt Hello.class`, then `java -jar hello.jar`. A `jar` is a zip file of classes; `-jar` is how services are usually started.
+7. (30m) **Write it down.** In `~/shopflow-notes/week-01.md` answer in your own words: (a) What do `javac`, `java`, `javap`, `jshell`, `jar` each do? (b) What is bytecode and who runs it? (c) What is the classpath? (d) Why does Java report some mistakes at compile time that JavaScript only reports at run time? Then add a 5-row table "Node ↔ Java": `node file.js` ↔ `java File.java`; `npm` ↔ Maven (week 1, S2); `package.json` ↔ `pom.xml`; `node_modules` ↔ `~/.m2`; `console.log` ↔ `System.out.println`.
 
 **Tips and common problems**
-- `curl: (60) SSL certificate problem` → a corporate proxy rewrites certificates → ask IT for the CA bundle or use `curl --cacert <file>`; never use `-k` for anything but a throwaway test.
-- `dig: command not found` on Windows → `dig` is part of the BIND tools → use `nslookup example.com` instead.
-- `java: command not found` when you run TinyServer → no JDK yet → do S2 step 1 first, then come back.
-- `error: class found on application class path` or `class TinyServer is public, should be declared in a file named` when launching a file → you are in a different folder or typed the wrong path → run the command from the root of `shopflow-lab` exactly as written.
-- `Address already in use` → another program owns the port → that is today's first incident (S3).
-- The `/hello` reply always prints `HTTP-Dispatcher` → that is the single default thread; with the pool you will see `pool-1-thread-N`.
+- `javac: command not found` → only a runtime is installed, or the JDK is not on your `PATH` → install the JDK, open a new terminal, check `which javac`.
+- `error: class, interface, enum, or record expected` → a stray `}` or text outside the class → check the braces above the reported line.
+- `Error: Could not find or load main class Hello` → you are in the wrong folder or you typed `java Hello.class` → run `java Hello` (no extension) in the folder that contains `Hello.class`.
+- `java Greeter.java` works but `java Greeter` fails → no `Greeter.class` exists yet → run `javac Greeter.java` first.
+- Windows paths → use `;` instead of `:` in classpaths, and `dir` instead of `ls`.
 
 **Done when**
-- [ ] `~/shopflow-notes/week1-trace.md` has the annotated DNS, TCP, TLS and HTTP blocks.
-- [ ] You have run `TinyServer` and seen `Hello from ...` in both `curl` and the browser.
-- [ ] You have two timing numbers: `/hello` while `/slow` runs on the single dispatcher, and the same with 4 threads.
-- [ ] You have written the Node vs JVM paragraph.
+- [ ] `java -version` and `javac -version` both show your JDK
+- [ ] `Hello`, `Greeter` and `Sum` run; the package sample runs with `-cp`
+- [ ] You saw three different compiler errors and can say what each one means
+- [ ] `week-01.md` has the answers to (a) to (d) and the small Node ↔ Java table
 
 ---
 
-## S2 Build (3h): toolchain, repo and your first green test
+## S2 Build (3h): repo, Maven and your first green test
 Today's ticket: **SF-00 "Make the project build and pass its smoke test."** The acceptance test is already in the repo and red.
 
-1. (20m) **Install the JDK.** Install JDK 25 (LTS); 21 also works. Options: SDKMAN (`curl -s "https://get.sdkman.io" | bash`, restart the terminal, `sdk list java`, then `sdk install java <the 25 LTS identifier shown>`) or Homebrew on macOS (`brew install openjdk@25`, then follow the brew message to link it). Check: `java -version` and `javac -version` must **both** print 25 (or 21). If only `java` works, you installed a JRE, not a JDK. (verify against current docs for the exact SDKMAN identifier)
-2. (15m) **Create your repository.** Copy the whole `shopflow-lab` folder somewhere in your home directory, then `cd` into it and run `git init -b main`, `git add -A`, `git commit -m "Start from shopflow-lab"`. Create an empty private repository on GitHub and push following the instructions GitHub shows (`git remote add origin ...`, `git push -u origin main`).
+*Doing it by hand with `javac` works for three files. A real project has hundreds of files and dozens of libraries, so we use a build tool. In Java that tool is **Maven**: it finds libraries, compiles, runs tests and builds the jar. Today you meet it step by step.*
+
+1. (20m) **Create your repository.** Copy the whole `shopflow-lab` folder somewhere in your home directory, then `cd` into it and run `git init -b main`, `git add -A`, `git commit -m "Start from shopflow-lab"`. Create an empty private repository on GitHub and push following the instructions GitHub shows (`git remote add origin ...`, `git push -u origin main`).
+2. (30m) **What Maven is, by reading.** Open the root `pom.xml` and `core/pom.xml` and find: the Java release (`maven.compiler.release`), the test libraries (JUnit, AssertJ) and the module list. Then read the Maven guide "Maven in 5 Minutes" (maven.apache.org). Write in your notes, in your own words:
+   - **`pom.xml`** is the project description (the `package.json` of Java).
+   - **Coordinates** `groupId:artifactId:version` name a library or your project.
+   - **Dependencies** are downloaded to the local cache `~/.m2/repository` (like `node_modules`, but shared by all projects).
+   - **Lifecycle phases** run in order: `validate → compile → test → package → verify → install`. Running a later phase runs all earlier ones.
+   - **`mvnw`** is the *wrapper*: a small script in the repo that downloads the right Maven version, so everyone builds with the same one.
 3. (20m) **Run the first red test.** `chmod +x mvnw scripts/*.sh` (macOS/Linux), then `./mvnw -v` (the first run downloads Maven; this can take a minute), then `scripts/run-week.sh w00`. You should see a failure: `expected: "Hello, Sara!" but was: "TODO"`. That is the goal: a precise error.
-4. (20m) **Turn it green.** Open `core/src/main/java/shopflow/w00/Hello.java`. Make `greet("Sara")` return `Hello, Sara!`. Re-run `scripts/run-week.sh w00`. Silence means green with `-q`; to see the summary run `./mvnw -pl core test -Dgroups=w00` and look for `Tests run: 1, Failures: 0`. Commit: `git commit -am "Make HelloTest green"`.
-5. (20m) **Open it in IntelliJ.** *File → Open* the repo's root `pom.xml` → *Open as Project*. Wait for indexing and set the project SDK to your JDK (*File → Project Structure → Project*). Open `HelloTest`, click the green arrow next to the test, and run it from the IDE. Then set a breakpoint on the `return` line in `Hello.greet`, right-click the arrow → *Debug*, and look at the variable `name` in the debugger panel.
-6. (20m) **See the plan.** Run `scripts/run-week.sh w03`. You will see dozens of failures. That is the roadmap for the next weeks, not a problem. Skim the names of the failing tests: they are the specification of Week 3.
-7. (25m) **Protect main and add a PR template.** On GitHub: *Settings → Branches → Add branch protection rule* for `main`: require a pull request before merging. Create `.github/pull_request_template.md` with sections *What*, *Why*, *How I tested it*, *Checklist (tests green, no TODOs left)*. Then: `git switch -c week-01-setup`, change something small (add a line to README), push, open a PR, review your own diff as if it were someone else's, and merge.
-8. (20m) **Docker sanity check.** Install Docker Desktop, start it, and run `docker run --rm hello-world`. Then start a database once: `docker run -d --name pg-lab -e POSTGRES_PASSWORD=lab -p 5432:5432 postgres:17`, check with `docker ps`, and stop it with `docker rm -f pg-lab`. You will use Postgres from Week 10.
-9. (20m) **Read the build.** Open the root `pom.xml` and `core/pom.xml`. Find: the Java release (`maven.compiler.release`), the test libraries (JUnit, AssertJ), and the module list. Read the Maven guide "Maven in 5 Minutes" (maven.apache.org) and write what `./mvnw test` does in three words per phase: validate, compile, test.
+4. (20m) **Turn it green.** Open `core/src/main/java/shopflow/w00/Hello.java`. Make `greet("Sara")` return `Hello, Sara!`. Re-run `scripts/run-week.sh w00`. For the summary run `./mvnw -pl core test -Dgroups=w00` and look for `Tests run: 1, Failures: 0`. Commit: `git commit -am "Make HelloTest green"`.
+5. (30m) **Maven by hand, one phase at a time.** Run each command, then look at what changed in `core/target/`:
+   - `./mvnw -pl core clean` (deletes `target/`)
+   - `./mvnw -pl core compile` (creates `target/classes` with your `.class` files; compare with what `javac` did in S1)
+   - `./mvnw -pl core test` (also compiles tests and runs them; read the `Tests run:` line)
+   - `./mvnw -pl core package` (creates a `.jar` under `target/`; list it with `jar tf core/target/*.jar | head`)
+   - `./mvnw -pl core dependency:tree` (shows which libraries your project uses)
+   Write one sentence per command saying what it did.
+6. (20m) **Open it in IntelliJ.** *File → Open* the repo's root `pom.xml` → *Open as Project*. Wait for indexing and set the project SDK to your JDK (*File → Project Structure → Project*). Open `HelloTest`, click the green arrow next to the test, and run it. Then set a breakpoint on the `return` line in `Hello.greet`, right-click the arrow → *Debug*, and look at the variable `name` in the debugger panel.
+7. (20m) **See the plan.** Run `scripts/run-week.sh w03`. You will see dozens of failures. That is the roadmap for the next weeks, not a problem. Skim the names of the failing tests: they are the specification of Week 3.
+8. (20m) **Protect main and open your first PR.** On GitHub: *Settings → Branches → Add branch protection rule* for `main`: require a pull request before merging. Create `.github/pull_request_template.md` with sections *What*, *Why*, *How I tested it*, *Checklist (tests green, no TODOs left)*. Then: `git switch -c week-01-setup`, change something small (add a line to the README), push, open a PR, review your own diff as if it were someone else's, and merge.
 
 **Tips and common problems**
 - `./mvnw: Permission denied` → the execute bit was lost on copy → `chmod +x mvnw`.
-- `Unable to find a valid JAVA_HOME` or Maven runs with the wrong Java → `JAVA_HOME` points to an old JDK → `echo $JAVA_HOME`, then unset it or point it to the new JDK (see incident INC-01-02 in S3).
+- `Unable to find a valid JAVA_HOME` or Maven runs with the wrong Java → `JAVA_HOME` points to an old JDK → `echo $JAVA_HOME`, then unset it or point it to the new JDK (see incident INC-01-01 in S3).
 - `release version 21 not supported` → the JDK that Maven uses is older than 21 → same cause as above.
 - `COMPILATION ERROR` right after a clean checkout → you edited a file and left a syntax error; read the first error line: it names the file and line.
 - Tests seem to run for all weeks → you ran `./mvnw test` (all tags). Use `scripts/run-week.sh w00` to filter by week.
-- Docker: `Cannot connect to the Docker daemon` → Docker Desktop is not started → start it and wait for the whale icon to settle.
-- Port 5432 is already allocated → a local Postgres is running → stop it or map another host port (`-p 5433:5432`).
+- Maven downloads forever or fails → proxy or network → ask for the company proxy settings; `~/.m2/settings.xml` holds them (verify against current docs).
 
 **Done when**
-- [ ] `java -version` and `javac -version` both show your JDK.
 - [ ] `scripts/run-week.sh w00` passes after your change, and the change is committed.
+- [ ] You ran every Maven command in step 5 and can say what each does.
 - [ ] You ran and debugged `HelloTest` in IntelliJ.
-- [ ] Your GitHub repo has branch protection and a PR template, and one merged PR.
-- [ ] `docker run --rm hello-world` works.
+- [ ] Your GitHub repo has branch protection, a PR template and one merged PR.
 
 ---
 
-## S3 Incident (2h): two environment incidents (mode B-lite)
-These are not in the Reality Lab catalog. They are the first two entries of your ledger because everybody meets them in week 1.
+## S3 Incident (2h): two everyday setup problems (mode B-lite)
+These are the two problems almost every beginner meets in week 1. You will cause them on purpose and learn to read them, so that they cost you five minutes later instead of an afternoon.
 
-**INC-01-01 ticket (from you, to yourself):** *"I started the server and it died immediately with `Address already in use`. I did not start anything else, did I?"*
-**INC-01-02 ticket:** *"The build says `JAVA_HOME is set to an invalid directory` and I have no idea which Java it's using."*
+**INC-01-01 ticket (from you, to yourself):** *"The build says `JAVA_HOME is set to an invalid directory` and I have no idea which Java it's using."*
+**INC-01-02 ticket:** *"My first Java file will not compile. The error mentions the file name and I have not touched the name."*
 
 1. (10m) **PREDICT** (write answers first, no searching):
-   - A) Why can two programs not listen on the same port? B) Which command could tell you *which* program holds a port? C) If `java -version` shows 25 but Maven fails, what else could name a Java location? D) What is the difference between `java` and `javac`?
+   - A) If `java -version` shows 25 but Maven fails with a Java error, what else could name a Java location? B) What is the difference between `java` and `javac`? C) What does the compiler print first when a class name and file name differ? D) Why is the *first* compiler error the one to fix first?
    <details><summary>Answers</summary>
 
-   A) A port is owned by one listening socket; the OS refuses a second `bind`. B) `lsof -nP -iTCP:8080 -sTCP:LISTEN` (macOS/Linux), `ss -ltnp` (Linux), `netstat -ano | findstr :8080` (Windows). C) The `JAVA_HOME` environment variable, or a Maven toolchain setting. D) `java` runs programs (the JVM); `javac` compiles source to bytecode and is only in a JDK.
+   A) The `JAVA_HOME` environment variable, or a Maven toolchain setting. B) `java` runs programs (the JVM); `javac` compiles source to bytecode and exists only in a JDK. C) `class X is public, should be declared in a file named X.java`. D) Later errors are often consequences of the first one (one missing brace can cause twenty messages).
    </details>
-2. (10m) **REPRODUCE INC-01-01.** Terminal 1: `java core/src/main/java/shopflow/w00/TinyServer.java 8080`. Terminal 2: start the same command again. Expected: `Exception in thread "main" java.net.BindException: Address already in use`.
-3. (15m) **INVESTIGATE.** In terminal 3 run `lsof -nP -iTCP:8080 -sTCP:LISTEN`. Find the `PID` column. Cross-check with `ps -p <PID> -o pid,command`. Is it the process you started in terminal 1? (Hint ladder is not provided this week; if stuck, search the exact words `Address already in use` plus the command name above.)
-4. (10m) **STUDY** (targeted). Julia Evans' *Networking! ACK!* zine, the pages on ports and sockets (about 10 minutes). Answer: (a) Which part of a connection is the port, which the IP address? (b) What does it mean for a socket to be in the LISTEN state?
-5. (10m) **FIX and PROVE.** Stop the first server with `kill <PID>` (this sends SIGTERM, the polite request; avoid `kill -9` unless it ignores you). Start the second one again: it should now print `Listening on ...`. Alternative fix: start it on another port: `... TinyServer.java 9090`. Stop everything.
-6. (20m) **INC-01-02: reproduce and investigate.** Run `JAVA_HOME=/tmp/does-not-exist ./mvnw -v`. Expected: an error mentioning `JAVA_HOME`. Then run `./mvnw -v` normally: the output lists `Java version: 25...` and `Java home: ...`. Run `echo $JAVA_HOME`, `which -a java`, and on macOS `/usr/libexec/java_home -V`. Write down: which `java` would a plain `java -version` use, and which one does Maven use? Fix: `unset JAVA_HOME` or set it to the JDK home that `./mvnw -v` reports.
-7. (15m) **GENERALIZE.** Add two ledger entries (INC-01-01, INC-01-02) in the template format: Symptom, Why, Reproduce, Observe with, Fix, Prevent, 1-minute answer. Say each answer aloud once and time it.
-8. (15m) **Prevent: write an env-doctor script.** In your repo create `scripts/env-doctor.sh` that prints: `java -version`, `javac -version`, `JAVA_HOME`, `./mvnw -v | head -3`, `docker --version`, and whether ports 8080 and 5432 are busy (`lsof -nP -iTCP:8080 -sTCP:LISTEN || echo "8080 free"`). Make it executable and commit it.
-9. (15m) **Write the troubleshooting checklist.** One page, `docs/troubleshooting.md`: "Port busy", "Wrong Java", "Build can't download dependencies (proxy)", "Docker not running". For each: symptom, command to check, fix.
+2. (15m) **REPRODUCE INC-01-01.** Run `JAVA_HOME=/tmp/does-not-exist ./mvnw -v`. Expected: an error mentioning `JAVA_HOME`.
+3. (20m) **INVESTIGATE.** Run `./mvnw -v` normally: the output lists `Java version: 25...` and `Java home: ...`. Run `echo $JAVA_HOME`, `which -a java`, and on macOS `/usr/libexec/java_home -V`; with SDKMAN also `sdk current java`. Write down: which `java` does a plain `java -version` use (the first on your `PATH`), and which one does Maven use (`JAVA_HOME` if set)? Fix: `unset JAVA_HOME` or set it to the JDK home that `./mvnw -v` reports.
+4. (10m) **STUDY** (targeted): explain in three sentences what `PATH` and `JAVA_HOME` are. `PATH` is the list of folders the shell searches for commands, in order; `JAVA_HOME` is a variable that tools such as Maven read to find the JDK; the two can point to different Javas, which is the source of most "wrong Java" bugs.
+5. (15m) **INC-01-02: reproduce and fix.** In `~/java-playground` create `Greeting.java` containing `public class Greeter { ... }` (class name differs from file name). Run `javac Greeting.java` and read the error. Fix it two ways: rename the file, or rename the class. Then add a typo in a method name and read `cannot find symbol` (it names the symbol and the line).
+6. (15m) **GENERALIZE.** Add two ledger entries (INC-01-01, INC-01-02) in the template format: Symptom, Why, Reproduce, Observe with, Fix, Prevent, 1-minute answer. Say each answer aloud once and time it.
+7. (15m) **Prevent: write an env-doctor script.** In your repo create `scripts/env-doctor.sh` that prints: `java -version`, `javac -version`, `JAVA_HOME`, `./mvnw -v | head -3`. Make it executable (`chmod +x`) and commit it.
+8. (20m) **Troubleshooting page.** One page, `docs/troubleshooting.md`: "Wrong Java / JAVA_HOME", "Class name and file name differ", "`mvnw: Permission denied`", "Build can't download dependencies (proxy)". For each: symptom, command to check, fix. (Port busy and Docker problems are in appendix A.)
 
 **Tips and common problems**
-- `lsof` prints nothing but the port is busy → the owner is another user or IPv6 only → run `sudo lsof ...` or `ss -ltnp` on Linux.
-- You killed the process and the port is still busy for a few seconds → the OS keeps closing sockets in `TIME_WAIT` (for client connections) → wait or use another port.
-- `kill` says `No such process` → wrong PID or already gone → re-run `lsof`.
-- Docker also holds ports → `docker ps` shows containers publishing `0.0.0.0:8080` → stop that container.
+- Everything works in one terminal but not another → a different `PATH` or an old session → open a new terminal, check `which java`.
+- You fixed `JAVA_HOME` in one terminal only → it was not saved → add the export line to `~/.zshrc` or `~/.bashrc`, or use SDKMAN's `sdk default java`.
+- IntelliJ uses another Java than the terminal → the IDE has its own SDK setting → *File → Project Structure → SDK*.
 
 **Done when**
-- [ ] You can name the process holding a port using `lsof` (or `ss`) and stop it.
-- [ ] You can show which Java Maven uses (`./mvnw -v`).
-- [ ] Two ledger entries exist, each explained in under a minute.
-- [ ] `scripts/env-doctor.sh` and `docs/troubleshooting.md` are committed.
+- [ ] You can show which Java Maven uses (`./mvnw -v`) and which one the shell uses
+- [ ] You can fix a class/file name error and explain the message
+- [ ] Two ledger entries exist, each explained in under a minute
+- [ ] `scripts/env-doctor.sh` and `docs/troubleshooting.md` are committed
 
 ---
 
 ## S4 Consolidate (2h)
-1. (30m) **Finish the Node ↔ JVM mapping table** in `docs/node-vs-jvm.md`. Fill every row in your own words: `package.json` ↔ `pom.xml`; `npm install` ↔ `./mvnw dependency:resolve` (or just `./mvnw test`); `node_modules` ↔ `~/.m2/repository`; `npm test` ↔ `./mvnw test`; `async/await` ↔ blocking threads (or `CompletableFuture`, later); event loop ↔ thread pool; TypeScript types ↔ Java static types (checked at compile time, also kept at runtime for classes); `undefined`/`null` ↔ `null` only; `node file.js` ↔ `java File.java` / `java -jar app.jar`.
-2. (20m) **Redraw the request diagram** from memory, then compare with S1 step 8 and fix mistakes. Add the failure points: DNS fails, connection refused, TLS certificate invalid, timeout, 5xx, slow database.
-3. (20m) **Flashcards.** Create 8 cards (question on the front, short answer on the back) from: the quiz items you missed, the three-way handshake, "why does an HTTPS connection take several round trips", "what does `Address already in use` mean", "`java` vs `javac`", "SIGTERM vs SIGKILL (preview for next week)".
+1. (30m) **Command cheat sheet.** Create `docs/java-cheatsheet.md` with a table: command, what it does, example. Include `java`, `javac`, `javap -c`, `jshell`, `jar`, `./mvnw clean|compile|test|package|dependency:tree`, `scripts/run-week.sh`.
+2. (25m) **Concepts in your own words** in `docs/how-java-works.md`: source → bytecode → JVM; JDK vs JRE vs JVM; what Maven adds; what a classpath is; the Node ↔ Java table from S1 with two more rows of your own.
+3. (20m) **Flashcards.** Create 8 cards (question on the front, short answer on the back) from: `java` vs `javac`, what bytecode is, what the classpath is, the Maven phases in order, what `~/.m2` is, what the wrapper `mvnw` is for, what a red test gives you, `JAVA_HOME` vs `PATH`.
 4. (20m) **Self-check.** Answer aloud, then open the answers.
-   1) Name the five steps from typing a URL to seeing the first byte. 2) Why did `/hello` wait while `/slow` ran, and what would Node do differently? 3) What does a red test give you that a failing app in the browser does not? 4) Which command shows what is listening on a port? 5) Why do you need a JDK, not only a JRE?
+   1) What happens when you run `javac Hello.java` and then `java Hello`? 2) Why do you need a JDK, not only a JRE? 3) What does `./mvnw test` do beyond running tests? 4) What is the difference between `PATH` and `JAVA_HOME`? 5) What does a red test give you that a failing app in the browser does not?
    <details><summary>Answers</summary>
 
-   1) DNS lookup, TCP handshake, TLS handshake, HTTP request, server work then response. 2) The single dispatcher thread was busy sleeping; the second request waited in the queue. Node would keep the loop free while waiting on I/O so it could answer `/hello` immediately (unless the code blocked the loop with CPU work). 3) A fast, repeatable, specific message about the exact expectation. 4) `lsof -nP -iTCP:<port> -sTCP:LISTEN` or `ss -ltnp`. 5) The JDK includes the compiler (`javac`) and tools; the JRE only runs programs.
+   1) `javac` checks the source and writes `Hello.class` (bytecode); `java` starts the JVM, which loads that class and runs `main`. 2) The JDK includes the compiler and tools; the JRE only runs programs. 3) It runs all earlier lifecycle phases first (validate, compile, test-compile), then runs the tests. 4) `PATH` lists the folders searched for commands; `JAVA_HOME` is read by tools such as Maven to find the JDK. 5) A fast, repeatable, specific message about the exact expectation.
    </details>
-5. (20m) **Ledger and notes.** Copy your ledger entries into `reality-lab/LEDGER.md` format inside your repo; commit `docs/node-vs-jvm.md`, `docs/troubleshooting.md`, the ledger.
+5. (15m) **Ledger and commit.** Put your ledger entries into the `reality-lab/LEDGER.md` format in your repo; commit `docs/java-cheatsheet.md`, `docs/how-java-works.md`, `docs/troubleshooting.md` and the ledger.
 6. (10m) **Retro** in `retro.md`: what worked, what blocked me (and for how long), what I will change. If installing tools took more than 90 minutes, note exactly where the time went.
 
-**Output:** green `HelloTest`, repo with protected `main` and a merged PR, `week1-trace.md`, `node-vs-jvm.md`, `troubleshooting.md`, `env-doctor.sh`, two ledger entries, 8 flashcards.
+**Output:** green `HelloTest`, repo with protected `main` and a merged PR, `week-01.md`, `how-java-works.md`, `java-cheatsheet.md`, `troubleshooting.md`, `env-doctor.sh`, two ledger entries, 8 flashcards.
+
+**Optional (when curious):** `lessons/appendix/appendix-a-web-ports-docker.md`: how a request travels (DNS, TCP, TLS, HTTP), your first tiny server, threads vs the event loop, port conflicts, and a Docker check before Week 10.
 
 **If stuck:** search the exact first line of the error message plus the tool name; if nothing helps in 15 minutes, write the question in your ledger as "open" and continue with the next step.

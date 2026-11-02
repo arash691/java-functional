@@ -27,7 +27,7 @@ Monthly: 60-minute mentor review, one code-review swap, one public postmortem re
 ## Timeline
 | Phase | Weeks | Theme | Gate |
 |---|---|---|---|
-| 0 | 1–2 | Bridge and setup | Draw a request's life, browser → DB |
+| 0 | 1–2 | Bridge and setup | Compile, run and build Java; explain JDK/JVM/Maven |
 | 1 | 3–9 | Java language, test-first | Idiomatic code review |
 | 1.5 | M1–M8 | Modeling: classes, OOD, domain concepts (party, money, time, history), 10 practical domains, data modeling, ERD | Timed model of an unseen brief: class diagram + ERD + DDL |
 | 2 | 10–15 | First Spring Boot vertical slice + React client | One-command run by a teammate |
@@ -45,8 +45,8 @@ Monthly: 60-minute mentor review, one code-review swap, one public postmortem re
 **Goal:** working environment, backend mental model, ShopFlow defined.
 
 **Week 1**
-- [ ] Entry quiz: HTTP, TCP/DNS/TLS, Git, Linux shell, async model (skip what you pass)
-- [ ] Install JDK 25 LTS (SDKMAN; 21 also works), IntelliJ, Docker, Postgres container
+- [ ] Install the JDK; compile and run Java by hand (`javac`, `java`, `jshell`, `jar`); learn what Maven is (HTTP/TCP/DNS basics are optional: appendix A)
+- [ ] Install JDK 25 LTS (SDKMAN; 21 also works) and IntelliJ (Docker comes before Week 10)
 - [ ] Create the GitHub repo with branch protection and PR template
 - [ ] Map Node concepts to JVM: event loop vs threads, npm vs Maven
 
@@ -56,7 +56,7 @@ Monthly: 60-minute mentor review, one code-review swap, one public postmortem re
 - [ ] Trace a request with browser devtools, `curl -v`, and DNS lookup
 - [ ] Reality Lab setup: create the `reality-lab` repo from `reality-lab/` template
 
-**Gate:** whiteboard a request from browser to DB and back, naming each hop and failure point.
+**Gate:** compile and run a Java program by hand, run a Maven build and explain JDK, JVM and Maven in your own words. (Optional: whiteboard a request from browser to DB, see appendix A.)
 
 ## Phase 1 — Java language, test-first (weeks 3–9)
 **Goal:** idiomatic Java with tests, not TypeScript in Java.

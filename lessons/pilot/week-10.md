@@ -4,6 +4,7 @@
 **Outcome:** You can wire a Spring Boot application with constructor injection, typed configuration and profiles, and you can explain two classic startup/runtime bugs (shared singleton state, circular dependencies) from evidence.
 
 **Before you start**
+- Docker Desktop installed and working (`docker run --rm hello-world`): see Part 3 of `lessons/appendix/appendix-a-web-ports-docker.md`.
 - Phase 1 done (Java and tests are comfortable). JDK 21+ (25 recommended). No database is needed this week. Docker is not needed yet.
 - `cd shopflow-lab` and check the toolchain: `./mvnw -v` (the first run downloads Maven and all dependencies: allow 3-10 minutes).
 - Run the whole week once to see the starting point: `scripts/run-week.sh w10 api`. Expect **30 tests, 25 red, 5 green** (the green ones are guards). Red is the starting point, not an error.

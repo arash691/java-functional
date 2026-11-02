@@ -69,6 +69,8 @@ Items marked **extra** are additional exercises that are not in the catalog.
 - **Julia Evans (jvns.ca)**: approachable zines on networking, Linux, debugging
 - **AlgoMaster roadmaps** (algomaster.io/roadmaps): topic checklists for Java, Spring, SQL, DevOps, Kubernetes
 
+**Appendix:** `appendix/appendix-a-web-ports-docker.md` holds optional web-fundamentals material (request life, ports, Docker check). Week 1 no longer requires it.
+
 ## Modeling block (M1–M8, `modeling/`)
 Do this after Week 9 and before Week 10. Order: practice classes (M1) → learn OOD (M2) → domain concepts: people, roles and organizations (M3), then money, time, history and transactions (M4) → model 10 practical domains as classes (M5–M6) → learn data modeling and SQL (M7) → model the data and ShopFlow (M8). Work: `modeling-lab/DOMAINS.md`; self-scoring: `modeling-lab/RUBRIC.md`. Sessions are S1 Try it, S2 Build, S3 Practice, S4 Consolidate. There are no repo tests; you write your own scenario tests and score yourself.
 
