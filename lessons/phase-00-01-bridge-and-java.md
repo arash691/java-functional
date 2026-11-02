@@ -138,6 +138,17 @@ Session format and the "Stuck?" routine are defined in `README.md`. Commands are
 1) DNS lookup (cached or recursive), TCP handshake (1 round trip), TLS handshake (1 round trip on TLS 1.3, 2 on TLS 1.2), then the HTTP request travels through a load balancer to the application, maybe to the database, and back; the first byte arrives after the server has processed it. 2) TLS must agree on keys and authenticate the server before any application data can be encrypted, and that needs message exchanges. 3) In DNS, at connect, during TLS, while waiting for a free server thread, in a slow database query, or on a lock. 4) `GET`, `PUT`, `DELETE` are idempotent (repeating them has the same effect), so a client may retry after a timeout; `POST` is not by default, so a retry can create a duplicate (a reason to use idempotency keys later).
 </details>
 
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- Why does a Java program start slowly and get faster after a while (JIT warm-up)?
+- What is the difference between a JAR and a WAR file?
+- What does `dependencyManagement` do in a `pom.xml`?
+- What changes when a client reuses a connection (HTTP keep-alive)?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
+
 **Output:** repo with hello-world, `reality-lab` repo with RL-00, request-flow diagram, Node↔JVM table, 10 flashcards.
 
 ## Week 2 — Linux, shell and meeting ShopFlow
@@ -247,6 +258,17 @@ Session format and the "Stuck?" routine are defined in `README.md`. Commands are
 
 SIGTERM (it can be handled; SIGKILL cannot). A process has its own memory; threads share the memory of their process. Rebase local, unpublished work to keep history linear; merge (or squash-merge) when integrating shared branches you must not rewrite.
 </details>
+
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- What is a zombie process and how does it appear?
+- What does `kill -9` skip that a JVM shutdown hook would have run?
+- When would you use `git cherry-pick`, and what is the risk?
+- What does `git bisect` need to work well?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
 
 **Output:** `notes/week-02.md`, `notes/questions.md`, baseline sketch, ten tickets on a board, ADR-001, 10 flashcards.
 
@@ -396,6 +418,17 @@ SIGTERM (it can be handled; SIGKILL cannot). A process has its own memory; threa
 Boxing uses `Integer.valueOf`, which caches −128..127, so those are the same object; 128 creates new objects and `==` compares identities. Pass-by-value: an object reference is passed by value (a copy of the reference). `javac` produces bytecode (`.class` files), which the JVM interprets and JIT-compiles.
 </details>
 
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- What is the difference between `final` on a variable and an immutable object?
+- What does `var` do, and when should you avoid it?
+- What does `static` mean for a method, a field and a nested class?
+- What happens when you unbox a `null` `Integer`?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
+
 **Output:** SF-01 skeleton merged with tests; 2 ledger entries; 10 flashcards.
 
 ---
@@ -518,6 +551,17 @@ Boxing uses `Integer.valueOf`, which caches −128..127, so those are the same o
 
 Equal objects must have equal hash codes; `equals` must be reflexive, symmetric, transitive, consistent and false for `null`. The double literal 0.1 is already inexact, so the first captures that error; the string constructor is exact. A record is wrong for mutable entities with identity, for JPA entities needing proxies, or when you need inheritance.
 </details>
+
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- Why must a `HashMap` key be immutable?
+- What does the default `hashCode` return?
+- What does it mean for `compareTo` to be consistent with `equals`?
+- When is the builder pattern worth it?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
 
 **Output:** SF-02, SF-03 PRs; RL-03, RL-04 entries; 10 flashcards.
 
@@ -650,6 +694,17 @@ Equal objects must have equal hash codes; `equals` must be reflexive, symmetric,
 Inheritance couples the subclass to the implementation details of the parent; composition delegates through a stable interface. Sealed types let each case carry different data, while enum constants share one shape. A pattern `switch` over a sealed type without `default` must cover every permitted subtype or compilation fails.
 </details>
 
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- What is the diamond problem with default methods and how does Java resolve it?
+- Why can an enum not be extended?
+- What is a covariant return type?
+- What is the difference between `sealed`, `final` and `non-sealed`?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
+
 **Output:** `OrderStatus` and `PaymentResult` with tests; RL-05 entry; decision note.
 
 ---
@@ -760,6 +815,17 @@ Inheritance couples the subclass to the implementation details of the parent; co
 Many keys collide into the same bucket and lookups become linear (in newer JDKs a crowded bucket becomes a tree, O(log n), if the keys are comparable). Generic type arguments are erased at compile time, leaving only casts, so there are no type arguments at runtime. Rarely: mostly as a `Deque` where you remove from both ends with an iterator in place; `ArrayDeque` is usually better.
 </details>
 
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- How does `ConcurrentHashMap` differ from `Collections.synchronizedMap`?
+- How is `HashSet` implemented?
+- What is the load factor and why 0.75?
+- Why is `List<Object>` not a supertype of `List<String>`?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
+
 **Output:** inventory updated; cheat sheet; RL-08 entry; 10 flashcards.
 
 ---
@@ -869,6 +935,17 @@ Many keys collide into the same bucket and lookups become linear (in newer JDKs 
 When the caller can reasonably recover and you want to force them to consider it; most failures are better unchecked. Resources are closed in reverse order even when exceptions happen, and close failures are added as suppressed exceptions. It hides bugs and failures, removes the cause, and leaves the system in an unknown state.
 </details>
 
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- What is the difference between `Error` and `Exception`?
+- How would you write a file so that a crash never leaves it half-written?
+- What is the difference between `java.io` and NIO (`Path`, `Files`, channels)?
+- How should a custom exception be designed (message, cause, fields)?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
+
 **Output:** SF-04, ADR-002, RL-09 entry, 10 flashcards.
 
 ---
@@ -972,6 +1049,17 @@ When the caller can reasonably recover and you want to force them to consider it
 `Instant` (or `OffsetDateTime`/`ZonedDateTime`, which also carry an offset). It makes time deterministic in tests. Local times may not exist (a gap) or occur twice (an overlap), and "one day" is not always 24 hours.
 </details>
 
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- What does `volatile` guarantee and what does it not?
+- `synchronized` or `ReentrantLock`: how do they differ?
+- What does happens-before mean in the Java Memory Model?
+- How do leap seconds and clock changes affect `Duration`?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
+
 **Output:** SF-05, the time-rules doc, RL-06 and RL-07 entries, 10 flashcards.
 
 ---
@@ -1063,5 +1151,16 @@ When the caller can reasonably recover and you want to force them to consider it
 
 `test` (via the surefire plugin). The parameterised form does not build the string when the level is disabled and keeps messages uniform. Secrets, tokens, passwords and unnecessary personal data.
 </details>
+
+### Interview corner
+A deeper question bank for this week (basic to tricky, with teaching answers and "prove it" exercises) is in `lessons/interview/phase-00-01-interview-questions.md`, section "Week N" for this week. Answer aloud first, then open each answer; add a flashcard for every one you miss.
+
+### Go deeper (open questions)
+*These have no answers here on purpose. Spend 15 to 30 minutes on one, write 3 to 5 lines in your notes, and add what you learn to your flashcards.*
+- What is MDC and what is it used for?
+- How do you exclude a transitive dependency?
+- What is mutation testing and what does it check that coverage does not?
+- What do `@BeforeEach` and `@BeforeAll` do in JUnit 5?
+- **Your own question:** write one thing from this week you still cannot explain, and find the answer.
 
 **Output:** the `phase-1` tag in git, gate notes, 9 to 10 ledger entries.

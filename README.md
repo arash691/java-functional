@@ -9,6 +9,7 @@ A self-study programme that takes a strong frontend (JS/TS) developer to a senio
 | `HANDOFF.md` | Current status, decisions, known issues and next steps (read first in a new session) |
 | `java-backend-roadmap.md` | The overview: phases, timeline, gates, senior checklist, resources |
 | `lessons/README.md` | How to study: session formats, learning modes, self-study playbook |
+| `lessons/interview/` | Deep interview questions with teaching answers (Phase 0–1 so far) |
 | `lessons/appendix/` | Optional reading: how the web works (DNS/TCP/TLS/HTTP), ports, Docker check |
 | `lessons/pilot/week-01.md` … `week-12.md` | Project-first lessons for weeks 1–12 (the new format) |
 | `lessons/modeling/m1…m8` | Modeling block between weeks 9 and 10: classes, OOD, domain concepts, 10 practical domains, data modeling |
