@@ -1,0 +1,5 @@
+shopflow:
+  shop:
+    name: ShopFlow
+    currency: EUR
+    free-shipping-threshold: 50.00

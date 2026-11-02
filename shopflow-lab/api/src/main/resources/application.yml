@@ -1,0 +1,10 @@
+# The lab repo hosts several weeks in one module, so each week keeps its own settings
+# in its own file. In a real project all of this would live in this one file.
+spring:
+  config:
+    import:
+      - "optional:classpath:shopflow-w10.yml"
+      - "optional:classpath:shopflow-w11.yml"
+      - "optional:classpath:shopflow-w12.yml"
+  jpa:
+    open-in-view: false

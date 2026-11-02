@@ -1,0 +1,12 @@
+shopflow:
+  catalog:
+    page-size: 10
+---
+# Ops starts the production deployment with SPRING_PROFILES_ACTIVE=production
+spring:
+  config:
+    activate:
+      on-profile: production
+shopflow:
+  catalog:
+    page-size: 50

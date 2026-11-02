@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: ShopFlow Catalog API
+  version: 0.1.0
+paths:
+  /api/products:
+    get:
+      summary: List products (paged)
+      operationId: listProducts
+      parameters:
+        - { name: page, in: query, required: false, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: size, in: query, required: false, schema: { type: integer, minimum: 1 }, description: "Defaults to shopflow.catalog.page-size" }
+      responses:
+        "200":
+          description: One page of products
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductPage" }
+    post:
+      summary: Create a product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProductRequest" }
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductResponse" }
+        "400":
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "409":
+          description: SKU already exists
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+  /api/products/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, format: int64 }
+    get:
+      summary: Get one product
+      operationId: getProduct
+      responses:
+        "200":
+          description: The product
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductResponse" }
+        "404":
+          description: No such product
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+    put:
+      summary: Replace a product
+      operationId: updateProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProductRequest" }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductResponse" }
+        "400":
+          description: Validation failed
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "404":
+          description: No such product
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "409":
+          description: SKU belongs to another product
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+    delete:
+      summary: Delete a product
+      operationId: deleteProduct
+      responses:
+        "204": { description: Deleted }
+        "404":
+          description: No such product
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+components:
+  schemas:
+    ProductRequest:
+      type: object
+      required: [sku, name, price]
+      properties:
+        sku: { type: string, pattern: "^[A-Z0-9-]{3,20}$" }
+        name: { type: string, maxLength: 100 }
+        price: { type: number, exclusiveMinimum: true, minimum: 0 }
+    ProductResponse:
+      type: object
+      required: [id, sku, name, price]
+      properties:
+        id: { type: integer, format: int64 }
+        sku: { type: string }
+        name: { type: string }
+        price: { type: number }
+    ProductPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ProductResponse" }
+        page: { type: integer }
+        size: { type: integer }
+        totalItems: { type: integer, format: int64 }
+    Problem:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field: { type: string }
+              message: { type: string }

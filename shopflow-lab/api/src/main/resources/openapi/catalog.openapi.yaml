@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  title: ShopFlow Catalog API
+  version: 0.1.0
+paths:
+  /api/products/{id}:
+    get:
+      summary: Get one product
+      operationId: getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: The product
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProductResponse" }
+        "404":
+          description: No such product
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+  # TODO SF-07: add /api/products (GET list, POST create) and the PUT and DELETE operations on /api/products/{id}
+components:
+  schemas:
+    ProductResponse:
+      type: object
+      required: [id, sku, name, price]
+      properties:
+        id: { type: integer, format: int64 }
+        sku: { type: string }
+        name: { type: string }
+        price: { type: number }
+    Problem:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+  # TODO SF-07: add ProductRequest and the list response schema

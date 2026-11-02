@@ -1,0 +1,5 @@
+spring:
+  jpa:
+    hibernate:
+      # Flyway owns the schema. 'none' = Hibernate never touches it. Try 'validate' to make Hibernate check entities against tables.
+      ddl-auto: none
