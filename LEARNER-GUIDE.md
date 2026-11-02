@@ -67,7 +67,8 @@ Run a week's tests with `scripts/run-week.sh wNN` (for Spring weeks: `scripts/ru
 | Need | File |
 |---|---|
 | Big picture, phases, gates | `java-backend-roadmap.md` |
-| Weekly lessons | `lessons/pilot/week-NN.md` (1–12), `lessons/phase-*.md` (13–60) |
+| Weekly lessons | `lessons/pilot/week-NN.md` (1–9), modeling block `lessons/modeling/m1…m8`, then `week-10…12`, `lessons/phase-*.md` (13–60) |
+| Modeling practice | `modeling-lab/DOMAINS.md` and `RUBRIC.md` |
 | Tickets | `shopflow-backlog.md` |
 | Production-style problems | `reality-lab/CATALOG.md` |
 | Practice code, hints and solutions | `shopflow-lab/` |

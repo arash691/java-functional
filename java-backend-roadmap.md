@@ -29,6 +29,7 @@ Monthly: 60-minute mentor review, one code-review swap, one public postmortem re
 |---|---|---|---|
 | 0 | 1–2 | Bridge and setup | Draw a request's life, browser → DB |
 | 1 | 3–9 | Java language, test-first | Idiomatic code review |
+| 1.5 | M1–M8 | Modeling: classes, OOD, domain concepts (party, money, time, history), 10 practical domains, data modeling, ERD | Timed model of an unseen brief: class diagram + ERD + DDL |
 | 2 | 10–15 | First Spring Boot vertical slice + React client | One-command run by a teammate |
 | 3 | 16–20 | OOD, patterns, FP, clean architecture | Smelly module refactor with ADRs |
 | 4 | 21–27 | Databases in depth | Fix a lost update three ways |
@@ -50,7 +51,7 @@ Monthly: 60-minute mentor review, one code-review swap, one public postmortem re
 - [ ] Map Node concepts to JVM: event loop vs threads, npm vs Maven
 
 **Week 2**
-- [ ] Write ShopFlow requirements, glossary and the first 10 tickets
+- [ ] Read the ShopFlow brief, copy the first 10 tickets to a board (requirements and glossary come after the modeling block)
 - [ ] Linux shell basics: processes, files, permissions, `curl`, `ss`, `grep`
 - [ ] Trace a request with browser devtools, `curl -v`, and DNS lookup
 - [ ] Reality Lab setup: create the `reality-lab` repo from `reality-lab/` template
@@ -72,6 +73,19 @@ Monthly: 60-minute mentor review, one code-review swap, one public postmortem re
 **Build:** CLI inventory engine for ShopFlow, test-first.
 **Reality Lab focus:** category D (JS→Java gotchas), `equals`/`hashCode` bugs, floating point, `Integer` cache.
 **Gate:** idiomatic code review with no "this is TypeScript" comments; ≥80% meaningful coverage.
+
+## Phase 1.5 — Modeling studio (weeks M1–M8, between weeks 9 and 10)
+**Goal:** learn to model before building: classes first, then OOD, then the concepts every business system shares (people, roles, organizations, money, time, history, transactions), then practice on 10 practical domains, then data modeling. Work from `modeling-lab/DOMAINS.md`, score with `modeling-lab/RUBRIC.md`. Lessons: `lessons/modeling/`.
+
+- **M1:** model classes by practice, no theory first (small warm-ups: Library, Parking lot)
+- **M2:** learn OOD: encapsulation, composition, SRP/OCP/DIP, value vs entity, UML class diagrams; refactor your M1 models
+- **M3:** domain concepts I: person vs user vs employee vs customer, party, role as a relationship over time, organization and org units, membership, labor
+- **M4:** domain concepts II: money, quantity, time and intervals, temporality (valid time vs record time), history and audit, business transactions, ledger entries, reversal
+- **M5:** model 5 practical domains as classes: retail catalog and pricing, orders/payments/refunds, bank accounts, double-entry ledger, booking
+- **M6:** model 5 more: subscription billing, HR and payroll, identity/access/organizations, inventory, insurance policy; pattern cheat sheet; timed checkpoint
+- **M7:** relational and data modeling: PostgreSQL, SQL basics, keys, constraints, ERD, normalization, effective-dated and append-only tables, class-to-table mapping, database transaction basics
+- **M8:** model the data for the domains and the ShopFlow capstone; gate on an unseen brief
+**Gate:** 60-minute timed model of a new brief (class diagram + ERD + DDL), at least 13/16 on both rubrics, plus a recorded walkthrough.
 
 ## Phase 2 — First vertical slice with Spring Boot (weeks 10–15)
 **Goal:** a working, tested, containerized REST service with a React client.

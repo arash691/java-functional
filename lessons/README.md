@@ -5,6 +5,7 @@ Companion to `../java-backend-roadmap.md`. One file per phase, with a plan for e
 | File | Weeks |
 |---|---|
 | `phase-00-01-bridge-and-java.md` | 1–9 |
+| `modeling/m1…m8-*.md` | M1–M8 (between 9 and 10) |
 | `phase-02-spring-boot-slice.md` | 10–15 |
 | `phase-03-design.md` | 16–20 |
 | `phase-04-databases.md` | 21–27 |
@@ -67,6 +68,9 @@ Items marked **extra** are additional exercises that are not in the catalog.
 - **Aleksey Shipilev's site**: JVM internals ("JVM Anatomy Quarks", "Java Memory Model Pragmatics")
 - **Julia Evans (jvns.ca)**: approachable zines on networking, Linux, debugging
 - **AlgoMaster roadmaps** (algomaster.io/roadmaps): topic checklists for Java, Spring, SQL, DevOps, Kubernetes
+
+## Modeling block (M1–M8, `modeling/`)
+Do this after Week 9 and before Week 10. Order: practice classes (M1) → learn OOD (M2) → domain concepts: people, roles and organizations (M3), then money, time, history and transactions (M4) → model 10 practical domains as classes (M5–M6) → learn data modeling and SQL (M7) → model the data and ShopFlow (M8). Work: `modeling-lab/DOMAINS.md`; self-scoring: `modeling-lab/RUBRIC.md`. Sessions are S1 Try it, S2 Build, S3 Practice, S4 Consolidate. There are no repo tests; you write your own scenario tests and score yourself.
 
 ## Project-first learning (pilot: weeks 1–12 in `pilot/`)
 The pilot replaces "read first, practise later" with a feedback loop in the `shopflow-lab` repo. Every concept uses one of three modes:

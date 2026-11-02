@@ -19,6 +19,7 @@ A self-study roadmap that takes a strong frontend (JS/TS) developer with no Java
 | Area | State |
 |---|---|
 | Weeks 1–12 | Done in the new format: `lessons/pilot/week-01.md` … `week-12.md` + `shopflow-lab/` (core and api modules, hints, solutions). Verified red then green for w00, w03–w12 with `scripts/verify-solutions.sh`. |
+| Modeling block M1–M8 | New: `lessons/modeling/m1…m8`, `modeling-lab/DOMAINS.md` + `RUBRIC.md`, between weeks 9 and 10. Doc-only (no repo tests). Added because learners had no OOD or data modeling before Spring/JPA. Week 2 no longer asks for requirements/DDD (now `shopflow-brief.md`); requirements, glossary and DDD move to Phase 3. **Not reviewed by a learner.** Phase 3 week 16+ still contains OOD content that overlaps M2 and should be trimmed. |
 | Weeks 13–60 | Older format (`lessons/phase-*.md`): step-by-step but reading-first. **Not yet converted.** |
 | `java-backend-roadmap.md`, `reality-lab/CATALOG.md`, `shopflow-backlog.md` | **Not yet synced** with the new method (old weekly rhythm, no pointers to repo tests). |
 | Lesson text and references | **Not reviewed by a learner.** Commands (SDKMAN, Homebrew, Docker, IDE debugger, `dependency:tree`, JaCoCo) and book/doc references are unverified. |

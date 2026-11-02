@@ -1,7 +1,7 @@
-# Week 2: Shell, signals, Git rescue and defining ShopFlow
+# Week 2: Shell, signals, Git rescue and meeting ShopFlow
 
 **Mode:** A (build-along), with two Git incidents (B-lite)  **Release:** v0.1 (project definition)
-**Outcome:** you are comfortable in a terminal, you know why a process stops politely or abruptly, you can recover "lost" Git work, and ShopFlow has requirements, a glossary, ten tickets and its first decision record (ADR-001).
+**Outcome:** you are comfortable in a terminal, you know why a process stops politely or abruptly, you can recover "lost" Git work, and ShopFlow is introduced with a one-page brief, ten tickets on a board and its first decision record (ADR-001). Requirements and a glossary come later, after the modeling block.
 
 **Before you start**
 - Week 1 is finished: JDK works, your `shopflow-lab` repo is on GitHub, `scripts/env-doctor.sh` exists.
@@ -36,26 +36,26 @@ No test tag this week. Hints: inside the incident steps. Solutions: `git reflog`
 
 ---
 
-## S2 Build (3h): define ShopFlow (requirements, glossary, tickets)
-Today's ticket: **SF-DOC "Define what we are building."** No code. Writing things down now saves arguments later, and a vague ticket is the most common cause of wasted work.
+## S2 Build (3h): meet ShopFlow and set up your board
+Today's ticket: **SF-DOC "Know what we are building and organise the work."** No code and no design. You are not asked to write requirements or a glossary yet: you have not learned class or database modeling, so those documents come later (Phase 3), when you can do them well.
 
-1. (20m) **Read about shared language.** *Domain-Driven Design Distilled* (DDD-D), ch. 1–2, or any short article on "ubiquitous language". Write one sentence: why must "order" mean exactly one thing in the code, the database and the conversations?
-2. (40m) **Requirements.** Create `docs/requirements.md` with these sections: *Vision* (2 sentences), *Actors* (Customer, Admin, Warehouse operator), *Use cases* (browse catalog, manage cart, place order, pay, track order, manage stock), *Non-goals* (for now: returns, marketplace sellers, multi-warehouse), *Quality goals* (be concrete: "checkout answers in under 500 ms at the 95th percentile", "no overselling", "no lost orders"). Under every use case write 2–3 lines of the happy path and 1–2 failure cases (payment declined, item out of stock).
-3. (40m) **Glossary.** Create `docs/glossary.md` with a table: Term, Meaning, Example, Not to be confused with. Include: Product, SKU, Category, Cart, Cart line, Order, Order line, Payment, Reservation (stock held for an order), Inventory, Customer. Rule: one term, one meaning. If you wrote "item" anywhere, decide whether it means a Product, a Cart line or an Order line and fix it.
-4. (50m) **First ten tickets.** Open `shopflow-backlog.md` and create GitHub Issues for SF-01 to SF-10 (keep the numbers in the title). For each, write acceptance criteria as bullets in the form *Given … When … Then …*. Example for SF-01: *Given an empty inventory, when I add 5 of ABC-0001, then stock of ABC-0001 is 5.* Add labels `phase-1` or `phase-2`. Keep each ticket small enough to finish in one session.
-5. (20m) **Board and templates.** Create a GitHub Project (Kanban) with columns Backlog, In progress, In review, Done. Add the ten issues. Add an issue template `.github/ISSUE_TEMPLATE/ticket.md` with: Goal, Acceptance criteria, Out of scope, Notes.
-6. (10m) **Ambiguity pass.** Search your documents for words like *fast, easy, nice, soon, appropriate, etc., and so on, flexible*. Replace each with something testable or delete it.
+1. (20m) **Read the brief.** Read `shopflow-brief.md` (one page). In `notes/week2.md` write 3 sentences in your own words: what ShopFlow is, who uses it, what it will become.
+2. (30m) **Skim the backlog.** Read `shopflow-backlog.md` from SF-01 to SF-12. For every word you do not understand (inventory? DTO? Flyway?), add a line to `notes/questions.md`. Do not look anything up now. Most of these questions are answered in weeks 3 to 12 and the modeling block (M1 to M8); tick them off as you meet them.
+3. (50m) **Create the first ten issues.** In your GitHub repo create issues for SF-01 to SF-10. Copy the title and the acceptance text from the backlog as written (keep the number in the title). Add the labels `phase-1` or `phase-2`. Do not rewrite or extend the criteria: writing good acceptance criteria is a Phase 3 skill.
+4. (30m) **Board and templates.** Create a GitHub Project (Kanban) with columns Backlog, In progress, In review, Done and add the ten issues. Add an issue template `.github/ISSUE_TEMPLATE/ticket.md` with the headings Goal, Acceptance criteria, Out of scope, Notes, and a PR template with Summary, Tests, Notes.
+5. (20m) **First naive guess (a baseline).** Pick SF-01 (inventory) and SF-03 (product catalog). On paper, list the *nouns* you think the code will need and draw boxes with lines between them. Do not worry about being right. Keep the sheet: you will compare it with what you can do after the modeling block (week M8).
+6. (30m) **Explain it aloud.** Record 2 minutes explaining ShopFlow to a friend who is not technical, without jargon. Listen back once and note where you hesitated.
 
 **Tips and common problems**
-- You cannot decide what a term means → write both meanings down, pick the one you need for ShopFlow, and note the other under "Not to be confused with".
-- Tickets become huge → split along user-visible behaviour, not along layers ("add stock" and "remove stock", not "do the database part").
-- Acceptance criteria describe implementation ("use a HashMap") → rewrite as observable behaviour.
-- You feel it's "just documentation" → a good test is: could someone else implement SF-01 from the ticket alone?
+- You feel you should write more design now → resist: designing before learning modeling produces documents you will throw away. The baseline sheet is enough.
+- Backlog wording looks odd (`DTO`, `Testcontainers`) → write it in `notes/questions.md` and move on; nobody expects you to understand it yet.
+- Tickets become long when copied → leave them as in the backlog; an issue can be short.
 
 **Done when**
-- [ ] `docs/requirements.md` and `docs/glossary.md` are committed and contain no vague words from step 6.
-- [ ] Ten GitHub issues exist with Given/When/Then criteria and are on the board.
+- [ ] `notes/week2.md` has your 3-sentence summary and `notes/questions.md` has at least 8 unfamiliar terms.
+- [ ] Ten GitHub issues exist and are on the board.
 - [ ] Issue and PR templates are in the repo.
+- [ ] You kept your baseline sheet of nouns and boxes for SF-01 and SF-03.
 
 ---
 
@@ -96,17 +96,17 @@ Today's ticket: **SF-DOC "Define what we are building."** No code. Writing thing
 
 ## S4 Consolidate (2h)
 1. (30m) **Write ADR-001.** Create `docs/adr/001-branching-and-stack.md` with: *Context* (solo learner, CI later, small team simulated), *Options* (trunk-based with short branches, git flow, long-lived feature branches), *Decision* (your choice, for example trunk-based with short-lived branches and PRs), *Consequences* (what gets easier, what gets harder). Add a second section "Tech stack for now": Java 25 (or 21), Maven, JUnit 6 + AssertJ, Postgres later, and why.
-2. (25m) **Flashcards.** 10 cards from: SIGTERM vs SIGKILL, what a branch is, `reset --soft/--mixed/--hard`, reflog, rebase vs merge, bisect idea, what exit code 0 means, why tickets need testable criteria, "one term one meaning", what ADR stands for.
+2. (25m) **Flashcards.** 10 cards from: SIGTERM vs SIGKILL, what a branch is, `reset --soft/--mixed/--hard`, reflog, rebase vs merge, bisect idea, what exit code 0 means, what a backlog ticket is, why we keep a board, what ADR stands for.
 3. (25m) **Self-check.** Answer aloud, then open the answers.
-   1) What is the difference between SIGTERM and SIGKILL, and why does a deployment tool send SIGTERM first? 2) How do you find a commit you lost with `reset --hard`? 3) Why can `git bisect run` find a bug faster than reading the diff? 4) Why is "the checkout should be fast" a bad acceptance criterion? 5) When is rebase a bad idea?
+   1) What is the difference between SIGTERM and SIGKILL, and why does a deployment tool send SIGTERM first? 2) How do you find a commit you lost with `reset --hard`? 3) Why can `git bisect run` find a bug faster than reading the diff? 4) What is an ADR and why write one before you need it? 5) When is rebase a bad idea?
    <details><summary>Answers</summary>
 
-   1) SIGTERM can be handled (the app can finish requests and clean up); SIGKILL cannot be caught. Tools send SIGTERM, wait a grace period, then SIGKILL. 2) `git reflog`, find the hash, `git branch rescue <hash>` or `git reset --hard <hash>`. 3) It does a binary search over history: about log2(N) test runs instead of reading N diffs. 4) It cannot be tested; replace it with "p95 under 500 ms at 50 requests per second". 5) On commits that others already pulled (it rewrites history); on shared branches.
+   1) SIGTERM can be handled (the app can finish requests and clean up); SIGKILL cannot be caught. Tools send SIGTERM, wait a grace period, then SIGKILL. 2) `git reflog`, find the hash, `git branch rescue <hash>` or `git reset --hard <hash>`. 3) It does a binary search over history: about log2(N) test runs instead of reading N diffs. 4) An Architecture Decision Record: a short note of context, options, decision and consequences, so that later you (or a teammate) know why a choice was made and can revisit it deliberately. 5) On commits that others already pulled (it rewrites history); on shared branches.
    </details>
 4. (20m) **Ledger and commit.** Commit all docs, scripts and the ledger. Open a PR titled "Week 2: define ShopFlow", review your diff, merge.
-5. (10m) **Retro** in `retro.md`: what worked, what blocked me, what I change. Note whether any ticket took longer to write than expected, and why.
+5. (10m) **Retro** in `retro.md`: what worked, what blocked me, what I change. Note which backlog terms you most want answered.
 6. (10m) **Preview Week 3.** Open `core/src/main/java/shopflow/w03/WorkedExample.java` and read it once. Next week you start writing Java.
 
-**Output:** `docs/requirements.md`, `docs/glossary.md`, ten GitHub issues on a board, issue and PR templates, `docs/adr/001-...md`, two ledger entries, git safety cheat sheet, 10 flashcards.
+**Output:** `notes/week2.md`, `notes/questions.md`, baseline sketch, ten GitHub issues on a board, issue and PR templates, `docs/adr/001-...md`, two ledger entries, git safety cheat sheet, 10 flashcards.
 
 **If stuck:** for Git, `git status` and `git log --oneline --graph --all` answer most questions; for the shell, `man <command>` or `<command> --help`; otherwise search the first line of the error message.

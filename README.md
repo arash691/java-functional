@@ -10,6 +10,9 @@ A self-study programme that takes a strong frontend (JS/TS) developer to a senio
 | `java-backend-roadmap.md` | The overview: phases, timeline, gates, senior checklist, resources |
 | `lessons/README.md` | How to study: session formats, learning modes, self-study playbook |
 | `lessons/pilot/week-01.md` … `week-12.md` | Project-first lessons for weeks 1–12 (the new format) |
+| `lessons/modeling/m1…m8` | Modeling block between weeks 9 and 10: classes, OOD, domain concepts, 10 practical domains, data modeling |
+| `modeling-lab/` | The 10 practical business briefs and the self-scoring rubric |
+| `shopflow-brief.md` | One-page ShopFlow overview (read in Week 2) |
 | `lessons/phase-*.md` | Step-by-step lessons for weeks 13–60 (older reading-first format; to be converted) |
 | `shopflow-lab/` | Practice repo: exercises, incident tests, hints, solutions (`shopflow-lab/README.md`) |
 | `shopflow-backlog.md` | The ShopFlow tickets that drive the build sessions |

@@ -4,6 +4,7 @@
 **Outcome:** You can persist a domain model in PostgreSQL with Flyway migrations, JPA entities and Spring Data repositories, see the SQL Hibernate generates, and fix the three classic JPA production bugs: N+1 queries, `LazyInitializationException`, and entities leaking into JSON.
 
 **Before you start**
+- Complete the modeling block (M1–M8, `lessons/modeling/`): this week assumes you can read an ERD and basic SQL.
 - Weeks 10 and 11 done. **Docker Desktop must be running** (`docker ps` must answer). Tests start a real PostgreSQL 17 in Docker with Testcontainers. The first run pulls the image (`postgres:17-alpine`, ~100 MB), so it is slow once.
 - Run the week once: `scripts/run-week.sh w12 api`. Expect **27 tests: 23 red, 4 green** (worked example plus guards). Red tests here are mostly `UnsupportedOperationException: TODO ...`: those are stubs for you to fill.
 - Tools: a SQL client is optional; the lesson uses `docker exec` + `psql` (see S1 step 2).
@@ -40,7 +41,7 @@ Goal: understand the path from SQL migration to entity to repository to test, th
    - Now fix it properly: create `api/src/main/resources/db/migration/V2__product_description.sql` with the `alter table` statement. Do **not** edit `V1`. Run again.
    - Update `ProductCatalog.toView` to pass the real description. Run `Ex2ProductDescriptionTest` and `Ex1ProductQueriesTest` (both green).
    - Question for your notes: why does Flyway refuse to start if you edit `V1__...` after it was applied? (Look at the `checksum` column in `flyway_schema_history`.)
-6. (25m) **Relationships, by reading.** Open `V3__create_orders.sql`, `OrderEntity`, `OrderItemEntity`. Draw the ERD: `customer_order 1 --- * order_item * --- 1 product`. In your notes answer: which side *owns* the relationship (the one with the foreign key, `@JoinColumn`)? What does `mappedBy` mean? What do `cascade = ALL` and `orphanRemoval = true` do to items? Why are the `@ManyToOne` fetches `LAZY`? Which table name is not `order`, and why?
+6. (25m) **Relationships, by reading.** Open `V3__create_orders.sql`, `OrderEntity`, `OrderItemEntity`. You drew ERDs in M7/M8, so first predict the tables and keys from `OrderEntity`, then compare with the SQL. Draw the ERD: `customer_order 1 --- * order_item * --- 1 product`. In your notes answer: which side *owns* the relationship (the one with the foreign key, `@JoinColumn`)? What does `mappedBy` mean? What do `cascade = ALL` and `orphanRemoval = true` do to items? Why are the `@ManyToOne` fetches `LAZY`? Which table name is not `order`, and why?
 7. (15m) **Close the loop.** `scripts/run-week.sh w12 api 'Ex*'` is green (7 tests) and the example stays green. Commit each exercise. Remove the debug breakpoint.
 
 **Tips and common problems**
